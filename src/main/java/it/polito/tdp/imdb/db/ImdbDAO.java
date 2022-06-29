@@ -84,6 +84,29 @@ public class ImdbDAO {
 		}
 	}
 	
+	public List<Integer> getAllYears(){
+		String sql="SELECT YEAR AS a "
+				+ "FROM movies "
+				+ "GROUP BY a "
+				+ "ORDER BY a";
+		List<Integer> result = new ArrayList<>();
+		Connection conn = DBConnect.getConnection();
+		try {
+			PreparedStatement st = conn.prepareStatement(sql);
+			ResultSet res = st.executeQuery();
+			while(res.next()) {
+				int a = res.getInt("year");
+				result.add(a);
+			}
+			conn.close();
+			return result;
+			
+		}catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	
 	
 	
