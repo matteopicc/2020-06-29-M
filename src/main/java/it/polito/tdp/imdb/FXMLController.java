@@ -7,6 +7,8 @@ package it.polito.tdp.imdb;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.imdb.model.Best;
+import it.polito.tdp.imdb.model.Director;
 import it.polito.tdp.imdb.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -38,7 +40,7 @@ public class FXMLController {
     private ComboBox<Integer> boxAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxRegista"
-    private ComboBox<?> boxRegista; // Value injected by FXMLLoader
+    private ComboBox<Director> boxRegista; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtAttoriCondivisi"
     private TextField txtAttoriCondivisi; // Value injected by FXMLLoader
@@ -48,11 +50,38 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
+      txtResult.clear();
+      int anno;
+      if(boxAnno.getValue()== null) {
+    	  txtResult.appendText("Selezionare un anno dal menu a tendina\n");
+    	  return;
+      }
+      anno = boxAnno.getValue();
+      this.model.creaGrafo(anno);
+      txtResult.appendText("GRAFO CREATO!!\n");
+      txtResult.appendText("#VERTICI: "+this.model.nVertici() +"\n");
+      txtResult.appendText("#ARCHI: "+this.model.nArchi() +"\n");
+      
+      boxRegista.getItems().addAll(this.model.getVertici());
 
     }
 
     @FXML
     void doRegistiAdiacenti(ActionEvent event) {
+    	txtResult.clear();
+    	Director d = boxRegista.getValue();
+    	if(this.model.grafoCreato() == false) {
+    		txtResult.appendText("Bisogna prima creare il grafico per poi accedere a questa funzione\n");
+    		return;
+    	}
+    	if(d == null) {
+    		txtResult.appendText("Selezionare un regista dal menu a tendina\n");
+    		return;
+    	}
+    	txtResult.appendText("Lista registi adiacenti: \n");
+    	for(Best g : this.model.getBest(d)) {
+    		txtResult.appendText(g + "\n");
+    	}
 
     }
 
@@ -75,8 +104,7 @@ public class FXMLController {
     
    public void setModel(Model model) {
     	this.model = model;
-    	
-    	
+    	boxAnno.getItems().addAll(model.anni());
     }
     
 }
